@@ -47,4 +47,5 @@ dependencies {
     compile 'com.rengwuxian.materialedittext:library:2.1.4'
     implementation 'com.squareup.okhttp3:okhttp:3.10.0'
     compile 'com.google.android.gms:play-services-auth:15.0.0'
+    compile 'com.nvanbenschoten.motion:library:1.1.2'
 }

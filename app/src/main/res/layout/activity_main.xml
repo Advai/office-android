@@ -21,7 +21,7 @@
             android:layout_height="match_parent"
             android:layout_marginTop="-180dp">
 
-            <ImageView
+            <com.nvanbenschoten.motion.ParallaxImageView
                 android:id="@+id/backgroundViewArt"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -89,19 +89,30 @@
             android:paddingRight="15dp"
             android:paddingTop="30dp">
 
-            <TextView
-                android:id="@+id/songTtile"
+            <RelativeLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:id="@+id/songTtile"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
-                android:text="@string/nothing_playing"
-                android:textAlignment="center"
-                android:marqueeRepeatLimit="marquee_forever"
-                android:ellipsize="marquee"
-                android:singleLine="true"
-                android:textAppearance="@android:style/TextAppearance.Material.Title" />
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/songTtileView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:text="@string/nothing_playing"
+                    android:textAlignment="center"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:ellipsize="marquee"
+                    android:singleLine="true"
+                    android:textAppearance="@android:style/TextAppearance.Material.Title" />
+
+            </RelativeLayout>
+
 
             <ProgressBar
                 android:id="@+id/songPosition"

@@ -18,6 +18,7 @@ import android.support.v4.view.animation.FastOutLinearInInterpolator;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -39,6 +40,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.makeramen.roundedimageview.RoundedImageView;
+import com.nvanbenschoten.motion.ParallaxImageView;
 
 import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 import org.json.JSONException;
@@ -78,7 +80,7 @@ import static com.acm.concert.ConcertLoginActivity.JSON;
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private RoundedImageView albumArtView;
-    private ImageView backgroundAlbumArt;
+    private ParallaxImageView backgroundAlbumArt;
     private ProgressBar songPosition;
     private TextView songTitle;
     private TextView currentTime;
@@ -174,7 +176,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
         }
     };
-
 
     private void animateElements(Palette.Swatch currentSwatch, final Palette.Swatch swatch, final  Palette.Swatch secondarySwatch) {
         Log.e("ANIM", "Starting Animation");
@@ -324,7 +325,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     }
                 }
 
-                animateElements(previousSwatch , swatch, secondarySwatch);
+                animateElements(previousSwatch , secondarySwatch, swatch);
             }
         });
     }
@@ -562,7 +563,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         albumArtView = findViewById(R.id.albumArt);
         songPosition = findViewById(R.id.songPosition);
-        songTitle = findViewById(R.id.songTtile);
+        songTitle = findViewById(R.id.songTtileView);
         backgroundAlbumArt = findViewById(R.id.backgroundViewArt);
         playPauseButton = findViewById(R.id.playButton);
         waveView = findViewById(R.id.wave);
@@ -574,6 +575,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         loginButton = findViewById(R.id.loginButton);
         volumeBar.setEnabled(false);
         songTitle.setSelected(true);
+        backgroundAlbumArt.registerSensorManager();
+        backgroundAlbumArt.setParallaxIntensity(1.075f);
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -674,8 +677,52 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        backgroundAlbumArt.unregisterSensorManager();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        backgroundAlbumArt.registerSensorManager();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         mSocket.disconnect();
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        int action = event.getAction();
+        int keyCode = event.getKeyCode();
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_VOLUME_UP:
+                if (action == KeyEvent.ACTION_DOWN) {
+                    int vol = currStatus.getVolume() + 5;
+                    if (vol > 100) {
+                        vol = 100;
+                    }
+                    currStatus.setVolume(vol);
+                    mSocket.emit("volume", currStatus.getVolume());
+                    volumeBar.setProgress(vol);
+                }
+                return true;
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+                if (action == KeyEvent.ACTION_DOWN) {
+                    int vol = currStatus.getVolume() - 5;
+                    if (vol < 0) {
+                        vol = 0;
+                    }
+                    currStatus.setVolume(vol);
+                    mSocket.emit("volume", currStatus.getVolume());
+                    volumeBar.setProgress(vol);
+                }
+                return true;
+            default:
+                return super.dispatchKeyEvent(event);
+        }
     }
 }

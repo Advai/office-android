@@ -51,7 +51,6 @@ public class ConcertLoginActivity extends AppCompatActivity implements GoogleApi
 
     private MaterialEditText usernameText;
     private MaterialEditText passwordText;
-    private RelativeLayout mainLayout;
     private Button loginButton;
     private CheckBox rememberBox;
 
@@ -69,7 +68,7 @@ public class ConcertLoginActivity extends AppCompatActivity implements GoogleApi
 
         usernameText = findViewById(R.id.userEdit);
         passwordText = findViewById(R.id.passwordEdit);
-        mainLayout = findViewById(R.id.mainLayout);
+        RelativeLayout mainLayout = findViewById(R.id.mainLayout);
         loginButton = findViewById(R.id.button);
         rememberBox = findViewById(R.id.rememberBox);
 
