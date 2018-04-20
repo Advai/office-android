@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context="com.acm.concert.MainActivity">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        tools:ignore="UselessParent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="-180dp">
+
+            <ImageView
+                android:id="@+id/backgroundViewArt"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                app:srcCompat="@mipmap/acm"
+                android:contentDescription="@string/background_blurred_image" />
+
+            <RelativeLayout
+                android:id="@+id/backgroundView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#ad363636" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/controlHolderView"
+            android:layout_alignParentStart="true"
+            android:clipToPadding="false">
+
+            <RelativeLayout
+                android:layout_width="280dp"
+                android:layout_height="280dp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:elevation="20dp"
+                android:outlineProvider="bounds"
+                tools:ignore="UselessLeaf" />
+
+            <com.makeramen.roundedimageview.RoundedImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/albumArt"
+                android:layout_width="300dp"
+                android:layout_height="300dp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:contentDescription="@string/album_art_desc"
+                android:elevation="21dp"
+                android:scaleType="centerCrop"
+                app:riv_corner_radius="30dp"
+                app:srcCompat="@mipmap/acm" />
+
+
+        </RelativeLayout>
+
+        <com.gelitenight.waveview.library.WaveView
+            android:id="@+id/wave"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:layout_alignParentBottom="true"
+
+            android:layout_alignParentStart="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="32dp" />
+
+        <RelativeLayout
+            android:id="@+id/controlHolderView"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:background="#00ffffff"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:paddingTop="30dp">
+
+            <TextView
+                android:id="@+id/songTtile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:text="@string/nothing_playing"
+                android:textAlignment="center"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:ellipsize="marquee"
+                android:singleLine="true"
+                android:textAppearance="@android:style/TextAppearance.Material.Title" />
+
+            <ProgressBar
+                android:id="@+id/songPosition"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/songTtile"
+                android:layout_marginTop="10dp"
+                android:progress="0"
+                android:progressTint="#3842a9" />
+
+            <Button
+                android:id="@+id/loginButton"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_alignParentBottom="true"
+                android:layout_below="@+id/currentTimeText"
+                android:layout_centerHorizontal="true"
+                android:background="#00000000"
+                android:text="@string/login"
+                android:textAppearance="@android:style/TextAppearance.Material.WindowTitle"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/playButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_below="@+id/songPosition"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="12dp"
+                android:background="@mipmap/ic_play_arrow_black_24dp" />
+
+            <Button
+                android:id="@+id/queueButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignBottom="@+id/playButton"
+                android:layout_marginEnd="16dp"
+                android:layout_toStartOf="@+id/playButton"
+                android:background="@mipmap/ic_queue_music_black_24dp" />
+
+            <Button
+                android:id="@+id/nextButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignBottom="@+id/playButton"
+                android:layout_marginStart="16dp"
+                android:layout_toEndOf="@+id/playButton"
+                android:background="@mipmap/ic_skip_next_black_24dp" />
+
+            <org.adw.library.widgets.discreteseekbar.DiscreteSeekBar
+                android:id="@+id/volumeSeek"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/playButton"
+                android:layout_marginTop="12dp"
+                android:max="100"
+                android:progress="30"
+                app:dsb_allowTrackClickToDrag="false"
+                app:dsb_indicatorColor="@color/colorPrimary"
+                app:dsb_progressColor="#3842a9"
+                app:dsb_trackColor="@color/colorPrimaryDark" />
+
+            <TextView
+                android:id="@+id/currentTimeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/songPosition"
+                android:fontFamily="monospace"
+                android:text="@string/left_time" />
+
+            <TextView
+                android:id="@+id/durationTimeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@+id/songPosition"
+                android:fontFamily="monospace"
+                android:text="@string/right_time"
+                android:textAlignment="textEnd" />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

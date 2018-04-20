@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Concert</string>
+    <string name="no_play">Nothing Playing</string>
+    <string name="album_art_desc">Album Art of the Currently Playing Song</string>
+
+    <!-- Strings related to login -->
+    <string name="title_activity_concert_login">Sign in</string>
+    <string name="netid">NetID</string>
+    <string name="password">Password</string>
+    <string name="background_blurred_image">Background blurred image</string>
+    <string name="nothing_playing">Nothing Playing</string>
+    <string name="login">LOGIN</string>
+    <string name="left_time">00:00</string>
+    <string name="right_time">00:00</string>
+    <string name="remember_login">Remember Login</string>
+    <string name="login_view">Login</string>
+</resources>

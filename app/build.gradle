@@ -1,0 +1,50 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 27
+    defaultConfig {
+        applicationId "com.acm.concert"
+        minSdkVersion 23
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        renderscriptTargetApi 24
+        renderscriptSupportModeEnabled true
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    dataBinding {
+        enabled = true
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation 'com.android.support:palette-v7:27.1.1'
+    implementation 'com.android.support:design:27.1.1'
+
+    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+
+    compile 'com.nineoldandroids:library:2.4.0'
+    compile ('io.socket:socket.io-client:1.0.0') {
+        // excluding org.json which is provided by Android
+        exclude group: 'org.json', module: 'json'
+    }
+    compile 'com.bartoszlipinski:viewpropertyobjectanimator:1.4.5'
+    compile 'com.truizlop.fabreveallayout:library:1.0.0'
+    compile 'com.gelitenight.waveview:waveview:1.0.0'
+    compile 'org.adw.library:discrete-seekbar:1.0.1'
+    compile 'com.makeramen:roundedimageview:2.3.0'
+    compile 'com.rengwuxian.materialedittext:library:2.1.4'
+    implementation 'com.squareup.okhttp3:okhttp:3.10.0'
+    compile 'com.google.android.gms:play-services-auth:15.0.0'
+}
