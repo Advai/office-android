@@ -31,6 +31,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.acm.concert.MainActivity" />
         </activity>
+        <activity
+            android:name=".QueueActivity"
+            android:label="@string/title_activity_queue"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.acm.concert.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

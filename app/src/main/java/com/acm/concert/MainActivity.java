@@ -4,6 +4,8 @@ import android.animation.AnimatorSet;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
+import android.app.ActivityOptions;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -46,6 +48,8 @@ import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -163,11 +167,22 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                         mDrawable[0] = getResources().getDrawable(R.mipmap.ic_play_arrow_black_24dp);
                         mDrawable[0].setColorFilter(new PorterDuffColorFilter(previousSwatch.getBodyTextColor(), PorterDuff.Mode.SRC_IN));
                         playPauseButton.setBackground(mDrawable[0]);
+                        ObjectAnimator amplitudeAnim = ObjectAnimator.ofFloat(waveView, "amplitudeRatio", waveView.getAmplitudeRatio(), 0.00001f);
+                        amplitudeAnim.setDuration(1000);
+                        amplitudeAnim.setInterpolator(new FastOutLinearInInterpolator());
+                        amplitudeAnim.start();
+
                     } else {
                         final Drawable[] mDrawable = new Drawable[1];
                         mDrawable[0] = getResources().getDrawable(R.mipmap.ic_pause_black_24dp);
                         mDrawable[0].setColorFilter(new PorterDuffColorFilter((Integer) previousSwatch.getBodyTextColor(), PorterDuff.Mode.SRC_IN));
                         playPauseButton.setBackground(mDrawable[0]);
+
+                        ObjectAnimator amplitudeAnim = ObjectAnimator.ofFloat(waveView, "amplitudeRatio", waveView.getAmplitudeRatio(), 0.05f);
+                        amplitudeAnim.setDuration(1000);
+                        amplitudeAnim.setInterpolator(new FastOutLinearInInterpolator());
+                        amplitudeAnim.start();
+
                     }
                 }
             });
@@ -191,8 +206,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             @Override
             public void onAnimationUpdate(final ValueAnimator valueAnimator) {
                 waveView.setWaveColor((((Integer)secondarySwatch.getRgb() & 0x00FFFFFF) | 0x44000000), (((Integer)valueAnimator.getAnimatedValue() & 0x00FFFFFF) | 0x44000000));
-                volumeBar.setRippleColor((Integer)valueAnimator.getAnimatedValue());
-                volumeBar.setThumbColor((Integer)valueAnimator.getAnimatedValue(), (Integer)secondarySwatch.getRgb());
+
             }
         });
 
@@ -220,6 +234,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 queueButton.setBackground(mDrawable[1]);
                 nextButton.setBackground(mDrawable[2]);
                 loginButton.setTextColor((Integer) valueAnimator.getAnimatedValue());
+                volumeBar.setThumbColor((Integer)valueAnimator.getAnimatedValue(), (Integer)secondarySwatch.getRgb());
+                volumeBar.setRippleColor((Integer)valueAnimator.getAnimatedValue());
             }
         });
         mainColorAnimation.setDuration(1000);
@@ -235,40 +251,42 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     }
 
     private void updateUI(ConcertStatus status) {
-        Log.e("UI UP", "Starting UI Update");
         volumeBar.setProgress(status.getVolume());
         if (status.getAudioStatus() != ConcertStatus.playerStatus.NOTHINGSPECIAL) {
-            Log.e("UI UP", "New UI");
-            songTitle.setText(status.getCurrentTrack());
-            songPosition.setMax(status.getDuration());
             songPosition.setProgress(status.getCurrentTime());
+
             long minutes = (status.getCurrentTime() / 1000)  / 60;
             int seconds = (status.getCurrentTime() / 1000) % 60;
             currentTime.setText(String.format(Locale.ENGLISH, "%d:%02d", minutes, seconds));
+
             minutes = (status.getDuration() / 1000)  / 60;
             seconds = (status.getDuration() / 1000) % 60;
             durationTime.setText(String.format(Locale.ENGLISH,"%d:%02d", minutes, seconds));
-            if(status.getIsPlaying()) {
-                Log.e("UI UP", "updateUI: START WAVE");
+
+            final Drawable[] mDrawable = new Drawable[1];
+            if(currStatus.getAudioStatus() == ConcertStatus.playerStatus.PLAYING) {
                 ObjectAnimator amplitudeAnim = ObjectAnimator.ofFloat(waveView, "amplitudeRatio", waveView.getAmplitudeRatio(), 0.05f);
                 amplitudeAnim.setDuration(1000);
                 amplitudeAnim.setInterpolator(new FastOutLinearInInterpolator());
                 amplitudeAnim.start();
-                playPauseButton.setBackgroundResource(R.mipmap.ic_pause_black_24dp);
+                mDrawable[0] = getResources().getDrawable(R.mipmap.ic_pause_black_24dp);
+                mDrawable[0].setColorFilter(new PorterDuffColorFilter((Integer) previousSwatch.getBodyTextColor(), PorterDuff.Mode.SRC_IN));
+                playPauseButton.setBackground(mDrawable[0]);
             } else {
-                Log.e("UI UP", "updateUI: STOP WAVE");
                 ObjectAnimator amplitudeAnim = ObjectAnimator.ofFloat(waveView, "amplitudeRatio", waveView.getAmplitudeRatio(), 0.00001f);
                 amplitudeAnim.setDuration(1000);
                 amplitudeAnim.setInterpolator(new FastOutLinearInInterpolator());
                 amplitudeAnim.start();
-                playPauseButton.setBackgroundResource(R.mipmap.ic_play_arrow_black_24dp);
+
+                mDrawable[0] = getResources().getDrawable(R.mipmap.ic_play_arrow_black_24dp);
+                mDrawable[0].setColorFilter(new PorterDuffColorFilter(previousSwatch.getBodyTextColor(), PorterDuff.Mode.SRC_IN));
+                playPauseButton.setBackground(mDrawable[0]);
             }
 
             // Check if we should download new thumb (song change)
-            Log.e("UI UP", "updateUI: Status:" +  status.toString() + " \nCurrentStatus: "+ currStatus.toString());
             if (!status.getCurrentTrack().equals(currStatus.getCurrentTrack())) {
-                currStatus = status;
-                Log.e("UI UP", "Get new art");
+                songPosition.setMax(status.getDuration());
+                songTitle.setText(status.getCurrentTrack());
                 DownloadThumbTask downloadThumbTask = new DownloadThumbTask();
                 downloadThumbTask.execute(status.getThumbnail());
             }
@@ -283,10 +301,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             playPauseButton.setBackgroundResource(R.mipmap.ic_play_arrow_black_24dp);
             currStatus = status;
             generateSwatchAndAnimate(BitmapFactory.decodeResource(getResources(),R.mipmap.acm));
+
             ObjectAnimator amplitudeAnim = ObjectAnimator.ofFloat(waveView, "amplitudeRatio", waveView.getAmplitudeRatio(), 0.00001f);
             amplitudeAnim.setDuration(1000);
             amplitudeAnim.setInterpolator(new FastOutLinearInInterpolator());
             amplitudeAnim.start();
+
             currentTime.setText(R.string.left_time);
             durationTime.setText(R.string.right_time);
         }
@@ -297,7 +317,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private void generateSwatchAndAnimate(Bitmap bitmap) {
         Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
             public void onGenerated(Palette p) {
-                Palette.Swatch secondarySwatch = p.getVibrantSwatch();
+                Palette.Swatch secondarySwatch = p.getDarkVibrantSwatch();
                 if (secondarySwatch == null) {
                     secondarySwatch = p.getLightVibrantSwatch();
                     if (secondarySwatch == null) {
@@ -311,13 +331,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     }
                 }
 
-                Palette.Swatch swatch = p.getDominantSwatch();
+                Palette.Swatch swatch = p.getLightVibrantSwatch();
                 if (swatch == null) {
                     swatch = p.getLightVibrantSwatch();
                     if (swatch == null) {
                         swatch = p.getDarkVibrantSwatch();
                         if (swatch == null) {
-                            swatch = p.getMutedSwatch();
+                            swatch = p.getDominantSwatch();
                             if (swatch == null) {
                                 swatch = p.getLightMutedSwatch();
                             }
@@ -348,6 +368,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
+        if (!cookies.equals("")) {
+            return;
+        }
         CredentialRequest request = new CredentialRequest.Builder()
                 .setSupportsPasswordLogin(true)
                 .build();
@@ -643,6 +666,23 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 loginIntent.putExtra("bodyText", previousSwatch.getBodyTextColor());
                 loginIntent.putExtra("titleText", previousSwatch.getTitleTextColor());
                 startActivityForResult(loginIntent, LOGIN_REQUEST_CODE);
+            }
+        });
+
+        queueButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent queueIntent = new Intent(MainActivity.this, QueueActivity.class);
+                queueIntent.putExtra("mainRGB", previousSwatch.getRgb());
+                queueIntent.putExtra("bodyText", previousSwatch.getBodyTextColor());
+                queueIntent.putExtra("titleText", previousSwatch.getTitleTextColor());
+                queueIntent.putExtra("cookie", cookies);
+                queueIntent.putExtra("thumbnail", "https://concert.acm.illinois.edu/" + currStatus.getThumbnail());
+
+                View sharedView = albumArtView;
+                ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this, sharedView, "albumArtTransition");
+
+                startActivity(queueIntent, activityOptions.toBundle());
             }
         });
 

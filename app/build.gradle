@@ -35,7 +35,7 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 
     compile 'com.nineoldandroids:library:2.4.0'
-    compile ('io.socket:socket.io-client:1.0.0') {
+    compile('io.socket:socket.io-client:1.0.0') {
         // excluding org.json which is provided by Android
         exclude group: 'org.json', module: 'json'
     }
@@ -48,4 +48,9 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:3.10.0'
     compile 'com.google.android.gms:play-services-auth:15.0.0'
     compile 'com.nvanbenschoten.motion:library:1.1.2'
+    compile 'com.github.kanytu:android-parallax-recyclerview:v1.7'
+    compile 'co.dift.ui.swipetoaction:library:1.1'
+    implementation 'com.squareup.picasso:picasso:2.71828'
+    compile 'uk.co.markormesher:android-fab:2.2.2'
+    implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
 }

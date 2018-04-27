@@ -1,9 +1,11 @@
 package com.acm.concert;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ConcertStatus implements Serializable {
@@ -37,6 +39,15 @@ public class ConcertStatus implements Serializable {
                 this.thumbnail = jsonObject.getString("thumbnail");
                 this.playedby = jsonObject.getString("playedby");
                 this.volume = jsonObject.getInt("volume");
+                JSONArray queueArray = new JSONArray(jsonObject.getString("queue"));
+                this.queue = new ArrayList<>();
+                for (int i = 0; i < queueArray.length(); i++) {
+                    Queue queue = new Queue();
+                    queue.setTitle(queueArray.getJSONObject(i).getString("title"));
+                    queue.setPlayedby(queueArray.getJSONObject(i).getString("playedby"));
+                    queue.setMid(queueArray.getJSONObject(i).getString("id"));
+                    this.queue.add(queue);
+                }
             }
 
         } catch (JSONException e) {
@@ -50,6 +61,10 @@ public class ConcertStatus implements Serializable {
         this.currentTrack = "";
         this.duration = 1;
         this.thumbnail = "";
+    }
+
+    public List<Queue> getQueue() {
+        return queue;
     }
 
     @Override

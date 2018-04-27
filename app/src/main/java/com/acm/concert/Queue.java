@@ -11,6 +11,18 @@ class Queue implements Serializable {
     private String playedby;
     private String thumbnail;
 
+    @Override
+    public String toString() {
+        return "Queue{" +
+                "duration=" + duration +
+                ", title='" + title + '\'' +
+                ", mrl='" + mrl + '\'' +
+                ", mid='" + mid + '\'' +
+                ", playedby='" + playedby + '\'' +
+                ", thumbnail='" + thumbnail + '\'' +
+                '}';
+    }
+
     public Integer getDuration() {
         return duration;
     }

@@ -14,4 +14,5 @@
     <string name="right_time">00:00</string>
     <string name="remember_login">Remember Login</string>
     <string name="login_view">Login</string>
+    <string name="title_activity_queue">Queue</string>
 </resources>
