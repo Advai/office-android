@@ -15,27 +15,36 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center_horizontal"
-        android:orientation="vertical"
-        android:paddingTop="32dp">
+        android:orientation="vertical">
+
+
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/queue_list"
             android:layout_width="match_parent"
+            android:elevation="2dp"
             android:layout_height="match_parent" />
+
+
+
         <uk.co.markormesher.android_fab.FloatingActionButton
             android:id="@+id/fab"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:elevation="3dp"
             />
 
-    </RelativeLayout>
+        <ImageView
+            android:id="@+id/transImgView"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:background="@color/white"
+            android:elevation="1dp"
+            android:scaleType="centerCrop"
+            android:transitionName="albumArtTransition"
+            app:layout_anchorGravity="top|center" />
 
-    <com.makeramen.roundedimageview.RoundedImageView
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
-        android:layout_height="150dp"
-        app:layout_anchor="@+id/mainLayout"
-        app:layout_anchorGravity="top|center"
-        android:transitionName="albumArtTransition"/>
+
+    </RelativeLayout>
 
 </android.support.design.widget.CoordinatorLayout>

@@ -46,6 +46,7 @@ public class ConcertStatus implements Serializable {
                     queue.setTitle(queueArray.getJSONObject(i).getString("title"));
                     queue.setPlayedby(queueArray.getJSONObject(i).getString("playedby"));
                     queue.setMid(queueArray.getJSONObject(i).getString("id"));
+                    queue.setThumbnail(queueArray.getJSONObject(i).getString("thumbnail"));
                     this.queue.add(queue);
                 }
             }

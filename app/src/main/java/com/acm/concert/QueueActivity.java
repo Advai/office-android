@@ -1,6 +1,9 @@
 package com.acm.concert;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
@@ -11,22 +14,24 @@ import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.poliveira.parallaxrecyclerview.ParallaxRecyclerAdapter;
+import com.squareup.picasso.Picasso;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -215,7 +220,21 @@ public class QueueActivity extends AppCompatActivity {
         adapter = new ParallaxQueueViewAdapter(queues);
         queueList.setAdapter(adapter);
 
-        adapter.setParallaxHeader(LayoutInflater.from(this).inflate(R.layout.list_header, queueList, false), queueList);
+        View myHeader = LayoutInflater.from(this).inflate(R.layout.list_header, queueList, false);
+        ImageView imageView = (ImageView)myHeader.findViewById(R.id.imageView2);
+        TextView titleCurr = myHeader.findViewById(R.id.textView);
+        titleCurr.setText(getIntent().getStringExtra("currentlyPlaying"));
+        titleCurr.setTextColor(titleText);
+        Bitmap bmp = null;
+        try {
+            bmp = BitmapFactory.decodeStream(this.openFileInput("myImage"));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        imageView.setImageBitmap(bmp);
+        ImageView transView = findViewById(R.id.transImgView);
+        transView.setImageBitmap(bmp);
+        adapter.setParallaxHeader(myHeader, queueList);
 
         swipeToAction = new SwipeToAction(queueList, new SwipeToAction.SwipeListener<Queue>() {
             @Override
@@ -268,6 +287,8 @@ public class QueueActivity extends AppCompatActivity {
             ((QueueViewHolder) holder).titleText.setText(queue.get(position).getTitle());
             ((QueueViewHolder) holder).titleText.setTextColor(bodyText);
             ((QueueViewHolder) holder).backgroundLayout.setBackgroundColor(mainrgb);
+            Picasso.get().load("https://concert.acm.illinois.edu/" + queue.get(position).getThumbnail()).into(((QueueViewHolder) holder).albumartView);
+
         }
 
         @Override
@@ -284,12 +305,14 @@ public class QueueActivity extends AppCompatActivity {
             TextView titleText;
             TextView playerText;
             RelativeLayout backgroundLayout;
+            ImageView albumartView;
 
             QueueViewHolder(View itemView) {
                 super(itemView);
                 titleText = itemView.findViewById(R.id.title_text);
                 playerText = itemView.findViewById(R.id.playterText);
                 backgroundLayout = itemView.findViewById(R.id.frontLayout);
+                albumartView = itemView.findViewById(R.id.person_photo);
             }
         }
     }

@@ -16,6 +16,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.view.animation.FastOutLinearInInterpolator;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
@@ -43,6 +44,8 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.nvanbenschoten.motion.ParallaxImageView;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 import org.json.JSONException;
@@ -287,8 +290,36 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             if (!status.getCurrentTrack().equals(currStatus.getCurrentTrack())) {
                 songPosition.setMax(status.getDuration());
                 songTitle.setText(status.getCurrentTrack());
-                DownloadThumbTask downloadThumbTask = new DownloadThumbTask();
-                downloadThumbTask.execute(status.getThumbnail());
+                Picasso.get().load("https://concert.acm.illinois.edu/" + status.getThumbnail()).into(new Target() {
+                    @Override
+                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                        albumArtView.setImageBitmap(bitmap);
+                        backgroundAlbumArt.setImageBitmap(BlurBuilder.blur(MainActivity.this, bitmap));
+                        generateSwatchAndAnimate(bitmap);
+                        String fileName = "myImage";
+                        try {
+                            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+                            FileOutputStream fo = openFileOutput(fileName, Context.MODE_PRIVATE);
+                            fo.write(bytes.toByteArray());
+                            // remember close file output
+                            fo.close();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    @Override
+                    public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+                        albumArtView.setImageResource(R.mipmap.acm);
+                        backgroundAlbumArt.setImageResource(R.mipmap.acm);
+                        generateSwatchAndAnimate(BitmapFactory.decodeResource(getResources(),R.mipmap.acm));
+                    }
+
+                    @Override
+                    public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                    }
+                });
             }
             currStatus = status;
         } else {
@@ -517,6 +548,18 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 backgroundAlbumArt.setImageResource(R.mipmap.acm);
                 generateSwatchAndAnimate(BitmapFactory.decodeResource(getResources(),R.mipmap.acm));
             } else {
+                String fileName = "myImage";
+                try {
+                    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+                    FileOutputStream fo = openFileOutput(fileName, Context.MODE_PRIVATE);
+                    fo.write(bytes.toByteArray());
+                    // remember close file output
+                    fo.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    fileName = null;
+                }
                 backgroundAlbumArt.setImageBitmap(BlurBuilder.blur(MainActivity.this, bitmap));
                 albumArtView.setImageBitmap(bitmap);
                 generateSwatchAndAnimate(bitmap);
@@ -678,9 +721,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 queueIntent.putExtra("titleText", previousSwatch.getTitleTextColor());
                 queueIntent.putExtra("cookie", cookies);
                 queueIntent.putExtra("thumbnail", "https://concert.acm.illinois.edu/" + currStatus.getThumbnail());
+                queueIntent.putExtra("currentlyPlaying", currStatus.getCurrentTrack());
 
-                View sharedView = albumArtView;
-                ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this, sharedView, "albumArtTransition");
+                View sharedView = findViewById(R.id.albumArt);
+                ActivityOptionsCompat activityOptions = ActivityOptionsCompat.makeSceneTransitionAnimation(MainActivity.this, sharedView, "albumArtTransition");
 
                 startActivity(queueIntent, activityOptions.toBundle());
             }
